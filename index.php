@@ -2,7 +2,7 @@
 /**
  * Plugin Name:     Events Tickets Extension: Virtual / Online Event Tickets
  * Description:     An extension that allows you to send event links in ticket email to registrants only
- * Version:         1.0.0
+ * Version:         1.0.1
  * Extension Class: Tribe__Extension__Virtual__Event__Ticket
  * Author:          Modern Tribe, Inc.
  * Author URI:      http://m.tri.be/1971
@@ -23,7 +23,7 @@ if ( ! class_exists( 'Tribe__Extension' ) ) {
 
 class Tribe__Extension__Virtual__Event__Ticket extends Tribe__Extension {
 
-	private static $version = "1.0.0";
+	private static $version = "1.0.1";
 
 	/**
 	 * Setup the Extension's properties.
@@ -31,8 +31,7 @@ class Tribe__Extension__Virtual__Event__Ticket extends Tribe__Extension {
 	 */
 	public function construct() {
 		$this->add_required_plugin( 'Tribe__Events__Main' );
-		$this->add_required_plugin( 'Tribe__Events__Pro__Main' );
-		$this->add_required_plugin( 'Tribe__Tickets__Main', '4.10.1' );
+		$this->add_required_plugin( 'Tribe__Tickets__Main');
 	}
 
 	/**
@@ -56,11 +55,11 @@ class Tribe__Extension__Virtual__Event__Ticket extends Tribe__Extension {
 	}
 
 	/**
-     * Hide the selected additional field from Event Details
-     *
+	 * Hide the selected additional field from Event Details
+	 *
 	 * @param $data array
-     *
-     * @since 1.0.0
+	 *
+	 * @since 1.0.0
 	 *
 	 * @return array
 	 */
@@ -91,10 +90,10 @@ class Tribe__Extension__Virtual__Event__Ticket extends Tribe__Extension {
 
 	/**
 	 * Register the settings tab and fields
-     *
-     * @since 1.0.0
-     *
-     * @return void
+	 *
+	 * @since 1.0.0
+	 *
+	 * @return void
 	 */
 	public function add_settings_tabs() {
 		require_once( dirname( __FILE__ ) . '/src/admin-views/tribe-options-virtual.php' );
@@ -102,8 +101,8 @@ class Tribe__Extension__Virtual__Event__Ticket extends Tribe__Extension {
 	}
 
 	/**
-     * Check if the event contains the Selected category
-     *
+	 * Check if the event contains the Selected category
+	 *
 	 * @param $event WP_Post
 	 *
 	 * @return bool
@@ -130,10 +129,10 @@ class Tribe__Extension__Virtual__Event__Ticket extends Tribe__Extension {
 	}
 
 	/**
-     * Get selected category
-     *
-     * @since 1.0.0
-     *
+	 * Get selected category
+	 *
+	 * @since 1.0.0
+	 *
 	 * @return string
 	 */
 	public function get_online_category() {
@@ -141,10 +140,10 @@ class Tribe__Extension__Virtual__Event__Ticket extends Tribe__Extension {
 	}
 
 	/**
-     * Get selected Field
-     *
-     * @since 1.0.0
-     *
+	 * Get selected Field
+	 *
+	 * @since 1.0.0
+	 *
 	 * @return mixed
 	 */
 	public function get_event_online_field() {
@@ -152,10 +151,10 @@ class Tribe__Extension__Virtual__Event__Ticket extends Tribe__Extension {
 	}
 
 	/**
-     * Render Event Link within Ticket Email
-     *
-     * @since 1.0.0
-     *
+	 * Render Event Link within Ticket Email
+	 *
+	 * @since 1.0.0
+	 *
 	 * @param $ticket array
 	 */
 	public function render_online_link_in_email( $ticket ) {
@@ -207,10 +206,10 @@ class Tribe__Extension__Virtual__Event__Ticket extends Tribe__Extension {
 	}
 
 	/**
-     * Disable showing QR Code for Events with selected category
-     *
-     * @since 1.0.0
-     *
+	 * Disable showing QR Code for Events with selected category
+	 *
+	 * @since 1.0.0
+	 *
 	 * @param $enabled bool
 	 * @param $ticket array
 	 *
@@ -218,7 +217,7 @@ class Tribe__Extension__Virtual__Event__Ticket extends Tribe__Extension {
 	 */
 	public function disable_qr_code( $enabled, $ticket ) {
 		if ( ! isset( $ticket['event_id'] ) ) {
-			return;
+			return $enabled;
 		}
 
 		$event = tribe_get_event( $ticket['event_id'] );
