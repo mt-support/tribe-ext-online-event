@@ -1,8 +1,6 @@
 <?php
 
 $event_cats = [];
-$fields     = [];
-
 
 if ( 'online-events' === tribe_get_request_var( 'tab' ) ) {
 	$taxonomy       = Tribe__Events__Main::instance()->get_event_taxonomy();
@@ -20,15 +18,6 @@ if ( 'online-events' === tribe_get_request_var( 'tab' ) ) {
 		$event_cats[0] = __( 'Select a category', 'tribe-ext-online-events' );
 		foreach ( $terms as $term ) {
 			$event_cats[ $term->term_id ] = $term->name;
-		}
-	}
-
-	$custom_fields = tribe_get_option( 'custom-fields' );
-
-	if ( ! empty( $custom_fields ) ) {
-		$fields[0] = __( 'Select a Field', 'tribe-ext-online-events' );
-		foreach ( $custom_fields as $field ) {
-			$fields[ $field['name'] ] = $field['label'];
 		}
 	}
 
@@ -76,25 +65,14 @@ $onlineTab = array(
 		),
 	)
 );
-if ( class_exists( 'Tribe__Events__Pro__Mains' ) ) {
-	$onlineTab['fields']['eventsOnlineField'] = array(
-		'type'            => 'dropdown',
-		'label'           => __( 'Events Additional Field that contains Event link', 'tribe-ext-online-events' ),
-		'default'         => false,
-		'validation_type' => 'options',
-		'options'         => $fields,
-		'if_empty'        => __( 'No Fields are found. You need to create an additional field. For help visit <a target="_blank" href="https://theeventscalendar.com/knowledgebase/k/pro-additional-fields/">here</a>', 'tribe-ext-online-events' ),
-		'can_be_empty'    => true,
-	);
-} else {
-	$onlineTab['fields']['eventsOnlineField'] = array(
-		'type'            => 'text',
-		'label'           => __( 'Custom field that contains Event link', 'tribe-ext-online-events' ),
-		'default'         => '',
-		'tooltip'         => __( 'To know more about Custom fields visit the WordPress <a target="_blank" href="https://wordpress.org/support/article/custom-fields/">Custom Fields Wiki</a>', 'tribe-ext-online-events' ),
-		'can_be_empty'    => true,
-	);
-}
+
+$onlineTab['fields']['eventsOnlineField'] = array(
+	'type'            => 'text',
+	'label'           => __( 'Custom field that contains Event link', 'tribe-ext-online-events' ),
+	'default'         => '',
+	'tooltip'         => __( 'To know more about Custom fields visit the WordPress <a target="_blank" href="https://wordpress.org/support/article/custom-fields/">Custom Fields Wiki</a>', 'tribe-ext-online-events' ),
+	'can_be_empty'    => true,
+);
 
 $onlineTab['fields']['eventsOnlineFieldHelperEmail'] = array(
 	'type' => 'html',

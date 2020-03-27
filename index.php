@@ -50,8 +50,42 @@ class Tribe__Extension__Virtual__Event__Ticket extends Tribe__Extension {
 		//disable QR Code
 		add_filter( 'tribe_tickets_plus_qr_enabled', array( $this, 'disable_qr_code' ), 10, 2 );
 
-		//hide the venue details
+		//add support for TEC Pro
+        $this->add_support_tec_pro();
 
+	}
+
+	public function add_support_tec_pro() {
+		if ( class_exists( 'Tribe__Events__Pro__Main' ) ) {
+		    add_filter( 'tribe_ext_online_event_setting_options', array( $this, 'add_tec_pro_setting'), 10 );
+		}
+	}
+
+	public function add_tec_pro_setting( $options ) {
+
+	    $fields = [];
+
+	    //created additional fields
+		$custom_fields = tribe_get_option( 'custom-fields' );
+
+		if ( ! empty( $custom_fields ) ) {
+			$fields[0] = __( 'Select a Field', 'tribe-ext-online-events' );
+			foreach ( $custom_fields as $field ) {
+				$fields[ $field['name'] ] = $field['label'];
+			}
+		}
+
+		$options['fields']['eventsOnlineField'] = array(
+			'type'            => 'dropdown',
+			'label'           => __( 'Events Additional Field that contains Event link', 'tribe-ext-online-events' ),
+			'default'         => false,
+			'validation_type' => 'options',
+			'options'         => $fields,
+			'if_empty'        => __( 'No Fields are found. You need to create an additional field. For help visit <a target="_blank" href="https://theeventscalendar.com/knowledgebase/k/pro-additional-fields/">here</a>', 'tribe-ext-online-events' ),
+			'can_be_empty'    => true,
+		);
+
+		return $options;
 	}
 
 	/**
@@ -97,7 +131,7 @@ class Tribe__Extension__Virtual__Event__Ticket extends Tribe__Extension {
 	 */
 	public function add_settings_tabs() {
 		require_once( dirname( __FILE__ ) . '/src/admin-views/tribe-options-virtual.php' );
-		new Tribe__Settings_Tab( 'online-events', __( 'Online Events', 'tribe-events-calendar-pro' ), $onlineTab );
+		new Tribe__Settings_Tab( 'online-events', __( 'Online Events', 'tribe-events-calendar-pro' ), apply_filters( 'tribe_ext_online_event_setting_options', $onlineTab ) );
 	}
 
 	/**
@@ -125,7 +159,7 @@ class Tribe__Extension__Virtual__Event__Ticket extends Tribe__Extension {
 		}
 
 		//check if cat exists
-		return in_array( $online_id, $cat_ids );
+		return apply_filters( 'tribe_ext_online_event_is_online', in_array( $online_id, $cat_ids ), $event );
 	}
 
 	/**
@@ -147,7 +181,7 @@ class Tribe__Extension__Virtual__Event__Ticket extends Tribe__Extension {
 	 * @return mixed
 	 */
 	public function get_event_online_field() {
-		return tribe_get_option( 'eventsOnlineField' );
+		return apply_filters( 'tribe_ext_online_event_online_field' , tribe_get_option( 'eventsOnlineField' ) );
 	}
 
 	/**
