@@ -53,6 +53,8 @@ class Tribe__Extension__Virtual__Event__Ticket extends Tribe__Extension {
 		//add support for TEC Pro
         $this->add_support_tec_pro();
 
+		//add support for Events Control Extension
+        $this->add_support_events_control_extension();
 	}
 
 	public function add_support_tec_pro() {
@@ -135,13 +137,26 @@ class Tribe__Extension__Virtual__Event__Ticket extends Tribe__Extension {
 	}
 
 	/**
-	 * Check if the event contains the Selected category
+	 * Check if the event is online
 	 *
 	 * @param $event WP_Post
 	 *
 	 * @return bool
 	 */
 	public function is_online_event( $event ) {
+	    return apply_filters( 'tribe_ext_online_event_is_online', $this->has_online_category( $event ), $event );
+	}
+
+	/**
+     * Check if event has online category
+     *
+     * @since 1.1.0
+     *
+	 * @param $event
+	 *
+	 * @return bool
+	 */
+	public function has_online_category( $event ) {
 
 		$online_id = $this->get_online_category();
 
@@ -159,7 +174,7 @@ class Tribe__Extension__Virtual__Event__Ticket extends Tribe__Extension {
 		}
 
 		//check if cat exists
-		return apply_filters( 'tribe_ext_online_event_is_online', in_array( $online_id, $cat_ids ), $event );
+		return in_array( $online_id, $cat_ids );
 	}
 
 	/**
@@ -262,4 +277,111 @@ class Tribe__Extension__Virtual__Event__Ticket extends Tribe__Extension {
 
 		return false;
 	}
+
+	/**
+	 * Add Support for Events Control
+     *
+     * @since 1.1.0
+	 */
+	public function add_support_events_control_extension() {
+		if ( class_exists( 'Tribe\Extensions\EventsControl\Event_Meta' ) ) {
+			//Provide an option to select
+			add_filter( 'tribe_ext_online_event_is_online', array( $this, 'events_control_is_online' ), 10, 2 );
+			add_filter( 'tribe_ext_online_event_online_field', array( $this, 'events_control_online_field' ) );
+			add_filter( 'tribe_ext_online_event_setting_options', array( $this, 'events_control_options'), 20 );
+			add_filter( 'tribe_template_pre_html', array( $this, 'remove_location_marker_from_frontend'), 20, 4 );
+		}
+	}
+
+	/**
+     * Check if Event is online from Event Controls
+     *
+     * @since 1.1.0
+     *
+	 * @param $is_online
+	 * @param $event
+     *
+	 * @return boolean
+	 */
+	public function events_control_is_online( $is_online, $event ) {
+		$event_meta = tribe( 'Tribe\Extensions\EventsControl\Event_Meta' );
+		$event_meta_online = $event_meta->is_online( $event );
+
+		return $event_meta_online ? $event_meta_online : $is_online;
+	}
+
+	/**
+     * Filter Event Link URL for Events Control
+     *
+     * @since 1.1.0
+     *
+	 * @param $field
+	 *
+	 * @return mixed
+	 */
+	public function events_control_online_field( $field ) {
+		$event_meta = tribe( 'Tribe\Extensions\EventsControl\Event_Meta' );
+		return $event_meta::$key_online_url;
+	}
+
+	/**
+     * Add options for Events Control extension
+     *
+     * @since 1.1.0
+     *
+	 * @param $options
+	 *
+	 * @return array
+	 */
+	public function events_control_options( $options ) {
+        $remove_fields = [
+                'eventsOnlineCategoryHelperTitle',
+                'eventsOnlineCategory',
+                'eventsOnlineFieldHelperTitle',
+                'eventsOnlineField'
+        ];
+
+		foreach ( $remove_fields as $field ) {
+			unset( $options['fields'][ $field ] );
+		}
+
+		$options['fields']['info-box-description']['html'] = __( 'You have <a target="_blank" href="https://theeventscalendar.com/extensions/event-statuses/">The Events Control</a> plugin installed with options for selecting Online Events and Event URL. <p>Event URL for marked online events will be sent in ticket email.</p>', 'tribe-ext-online-events' );
+
+		$options['fields']['eventsControlHideLink'] = array(
+			'type'            => 'checkbox_bool',
+			'label'           => esc_html__( 'Hide Event\'s Online URL in the Event Page', 'tribe-ext-online-events' ),
+			'default'         => false,
+			'validation_type' => 'boolean',
+		);
+
+		return $options;
+	}
+
+	/**
+     * Filter HTML template to hide the online URL
+     *
+     * @since 1.1.0
+     *
+	 * @param $pre_html
+     *
+	 * @param $file
+     *
+	 * @param $name
+     *
+	 * @param $template_class
+	 *
+	 * @return string
+	 */
+	public function remove_location_marker_from_frontend( $pre_html, $file, $name, $template_class ) {
+
+		if ( 'single/online-marker' != implode( '/', $name ) ) {
+			return $pre_html;
+		}
+
+		if ( ! tribe_is_truthy( tribe_get_option( 'eventsControlHideLink' ) ) ) {
+            return $pre_html;
+		}
+
+		return '';
+    }
 }
