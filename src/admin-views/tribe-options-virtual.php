@@ -81,7 +81,7 @@ $onlineTab['fields']['eventsOnlineFieldHelperEmail'] = array(
 
 $onlineTab['fields']['eventsOnlineHeading'] = array(
 	'type'            => 'text',
-	'label'           => __( 'Email Heading for link' ),
+	'label'           => __( 'Email Heading for link', 'tribe-ext-online-events' ),
 	'tooltip'         => '',
 	'default'         => 'Event Link',
 	'validation_type' => 'html',
