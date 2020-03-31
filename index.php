@@ -357,7 +357,7 @@ class Tribe__Extension__Virtual__Event__Ticket extends Tribe__Extension {
 			unset( $options['fields'][ $field ] );
 		}
 
-		$options['fields']['info-box-description']['html'] = __( 'You have <a target="_blank" href="https://theeventscalendar.com/extensions/event-statuses/">The Events Control</a> plugin installed with options for selecting Online Events and Event URL. <p>Event URL for marked online events will be sent in ticket email.</p>', 'tribe-ext-online-events' );
+		$options['fields']['info-box-description']['html'] = __( 'You have <a target="_blank" href="https://theeventscalendar.com/extensions/event-statuses/">The Events Control</a> extension installed with options for selecting Online Events and an Event URL. <p>Event URLs for marked online events will be sent in ticket email.</p>', 'tribe-ext-online-events' );
 
 		$options['fields']['eventsControlHideLink'] = [
 			'type'            => 'checkbox_bool',
