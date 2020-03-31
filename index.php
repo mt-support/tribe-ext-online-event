@@ -23,15 +23,14 @@ if ( ! class_exists( 'Tribe__Extension' ) ) {
 
 class Tribe__Extension__Virtual__Event__Ticket extends Tribe__Extension {
 
-	private static $version = "1.0.1";
+	private static $version = '1.1.0';
 
 	/**
 	 * Setup the Extension's properties.
-	 *
 	 */
 	public function construct() {
 		$this->add_required_plugin( 'Tribe__Events__Main' );
-		$this->add_required_plugin( 'Tribe__Tickets__Main');
+		$this->add_required_plugin( 'Tribe__Tickets__Main' );
 	}
 
 	/**
@@ -39,35 +38,45 @@ class Tribe__Extension__Virtual__Event__Ticket extends Tribe__Extension {
 	 */
 	public function init() {
 		//add settings panel
-		add_action( 'tribe_settings_do_tabs', array( $this, 'add_settings_tabs' ) );
+		add_action( 'tribe_settings_do_tabs', [ $this, 'add_settings_tabs' ] );
 
 		//hide the saved field in the frontend
-		add_filter( 'tribe_get_custom_fields', array( $this, 'hide_online_link_field_from_details' ) );
+		add_filter( 'tribe_get_custom_fields', [ $this, 'hide_online_link_field_from_details' ] );
 
 		//add Event Link in the Ticket Email
-		add_action( 'tribe_tickets_ticket_email_ticket_bottom', array( $this, 'render_online_link_in_email' ) );
+		add_action( 'tribe_tickets_ticket_email_ticket_bottom', [ $this, 'render_online_link_in_email' ] );
 
 		//disable QR Code
-		add_filter( 'tribe_tickets_plus_qr_enabled', array( $this, 'disable_qr_code' ), 10, 2 );
+		add_filter( 'tribe_tickets_plus_qr_enabled', [ $this, 'disable_qr_code' ], 10, 2 );
 
 		//add support for TEC Pro
-        $this->add_support_tec_pro();
+		$this->add_support_tec_pro();
 
 		//add support for Events Control Extension
-        $this->add_support_events_control_extension();
+		$this->add_support_events_control_extension();
 	}
 
+	/**
+	 * Add The Events Calendar PRO support
+	 */
 	public function add_support_tec_pro() {
 		if ( class_exists( 'Tribe__Events__Pro__Main' ) ) {
-		    add_filter( 'tribe_ext_online_event_setting_options', array( $this, 'add_tec_pro_setting'), 10 );
+			add_filter( 'tribe_ext_online_event_setting_options', [ $this, 'add_tec_pro_setting' ], 10 );
 		}
 	}
 
+	/**
+	 * Filter Setting options
+	 *
+	 * @param $options
+	 *
+	 * @return mixed
+	 */
 	public function add_tec_pro_setting( $options ) {
 
-	    $fields = [];
+		$fields = [];
 
-	    //created additional fields
+		//created additional fields
 		$custom_fields = tribe_get_option( 'custom-fields' );
 
 		if ( ! empty( $custom_fields ) ) {
@@ -77,7 +86,7 @@ class Tribe__Extension__Virtual__Event__Ticket extends Tribe__Extension {
 			}
 		}
 
-		$options['fields']['eventsOnlineField'] = array(
+		$options['fields']['eventsOnlineField'] = [
 			'type'            => 'dropdown',
 			'label'           => __( 'Events Additional Field that contains Event link', 'tribe-ext-online-events' ),
 			'default'         => false,
@@ -85,7 +94,7 @@ class Tribe__Extension__Virtual__Event__Ticket extends Tribe__Extension {
 			'options'         => $fields,
 			'if_empty'        => __( 'No Fields are found. You need to create an additional field. For help visit <a target="_blank" href="https://theeventscalendar.com/knowledgebase/k/pro-additional-fields/">here</a>', 'tribe-ext-online-events' ),
 			'can_be_empty'    => true,
-		);
+		];
 
 		return $options;
 	}
@@ -144,15 +153,15 @@ class Tribe__Extension__Virtual__Event__Ticket extends Tribe__Extension {
 	 * @return bool
 	 */
 	public function is_online_event( $event ) {
-	    return apply_filters( 'tribe_ext_online_event_is_online', $this->has_online_category( $event ), $event );
+		return apply_filters( 'tribe_ext_online_event_is_online', $this->has_online_category( $event ), $event );
 	}
 
 	/**
-     * Check if event has online category
+	 * Check if event has online category
+	 *
+	 * @param $event
      *
      * @since 1.1.0
-     *
-	 * @param $event
 	 *
 	 * @return bool
 	 */
@@ -196,15 +205,17 @@ class Tribe__Extension__Virtual__Event__Ticket extends Tribe__Extension {
 	 * @return mixed
 	 */
 	public function get_event_online_field() {
-		return apply_filters( 'tribe_ext_online_event_online_field' , tribe_get_option( 'eventsOnlineField' ) );
+		return apply_filters( 'tribe_ext_online_event_online_field', tribe_get_option( 'eventsOnlineField' ) );
 	}
 
 	/**
 	 * Render Event Link within Ticket Email
 	 *
-	 * @since 1.0.0
-	 *
 	 * @param $ticket array
+     *
+     * @since 1.0.0
+     *
+     * @return void
 	 */
 	public function render_online_link_in_email( $ticket ) {
 
@@ -257,11 +268,11 @@ class Tribe__Extension__Virtual__Event__Ticket extends Tribe__Extension {
 	/**
 	 * Disable showing QR Code for Events with selected category
 	 *
-	 * @since 1.0.0
-	 *
 	 * @param $enabled bool
 	 * @param $ticket array
 	 *
+     * @since 1.0.0
+     *
 	 * @return bool
 	 */
 	public function disable_qr_code( $enabled, $ticket ) {
@@ -280,66 +291,67 @@ class Tribe__Extension__Virtual__Event__Ticket extends Tribe__Extension {
 
 	/**
 	 * Add Support for Events Control
-     *
-     * @since 1.1.0
+	 *
+	 * @since 1.1.0
 	 */
 	public function add_support_events_control_extension() {
 		if ( class_exists( 'Tribe\Extensions\EventsControl\Event_Meta' ) ) {
 			//Provide an option to select
-			add_filter( 'tribe_ext_online_event_is_online', array( $this, 'events_control_is_online' ), 10, 2 );
-			add_filter( 'tribe_ext_online_event_online_field', array( $this, 'events_control_online_field' ) );
-			add_filter( 'tribe_ext_online_event_setting_options', array( $this, 'events_control_options'), 20 );
-			add_filter( 'tribe_template_pre_html', array( $this, 'remove_location_marker_from_frontend'), 20, 4 );
+			add_filter( 'tribe_ext_online_event_is_online', [ $this, 'events_control_is_online' ], 10, 2 );
+			add_filter( 'tribe_ext_online_event_online_field', [ $this, 'events_control_online_field' ] );
+			add_filter( 'tribe_ext_online_event_setting_options', [ $this, 'events_control_options' ], 20 );
+			add_filter( 'tribe_template_pre_html', [ $this, 'remove_location_marker_from_frontend' ], 20, 4 );
 		}
 	}
 
 	/**
-     * Check if Event is online from Event Controls
-     *
-     * @since 1.1.0
-     *
+	 * Check if Event is online from Event Controls
+	 *
 	 * @param $is_online
 	 * @param $event
      *
+     * @since 1.1.0
+	 *
 	 * @return boolean
 	 */
 	public function events_control_is_online( $is_online, $event ) {
-		$event_meta = tribe( 'Tribe\Extensions\EventsControl\Event_Meta' );
+		$event_meta        = tribe( 'Tribe\Extensions\EventsControl\Event_Meta' );
 		$event_meta_online = $event_meta->is_online( $event );
 
 		return $event_meta_online ? $event_meta_online : $is_online;
 	}
 
 	/**
-     * Filter Event Link URL for Events Control
+	 * Filter Event Link URL for Events Control
+	 *
+	 * @param $field
      *
      * @since 1.1.0
-     *
-	 * @param $field
 	 *
 	 * @return mixed
 	 */
 	public function events_control_online_field( $field ) {
 		$event_meta = tribe( 'Tribe\Extensions\EventsControl\Event_Meta' );
+
 		return $event_meta::$key_online_url;
 	}
 
 	/**
-     * Add options for Events Control extension
+	 * Add options for Events Control extension
+	 *
+	 * @param $options
      *
      * @since 1.1.0
-     *
-	 * @param $options
 	 *
 	 * @return array
 	 */
 	public function events_control_options( $options ) {
-        $remove_fields = [
-                'eventsOnlineCategoryHelperTitle',
-                'eventsOnlineCategory',
-                'eventsOnlineFieldHelperTitle',
-                'eventsOnlineField'
-        ];
+		$remove_fields = [
+			'eventsOnlineCategoryHelperTitle',
+			'eventsOnlineCategory',
+			'eventsOnlineFieldHelperTitle',
+			'eventsOnlineField',
+		];
 
 		foreach ( $remove_fields as $field ) {
 			unset( $options['fields'][ $field ] );
@@ -347,12 +359,12 @@ class Tribe__Extension__Virtual__Event__Ticket extends Tribe__Extension {
 
 		$options['fields']['info-box-description']['html'] = __( 'You have <a target="_blank" href="https://theeventscalendar.com/extensions/event-statuses/">The Events Control</a> plugin installed with options for selecting Online Events and Event URL. <p>Event URL for marked online events will be sent in ticket email.</p>', 'tribe-ext-online-events' );
 
-		$options['fields']['eventsControlHideLink'] = array(
+		$options['fields']['eventsControlHideLink'] = [
 			'type'            => 'checkbox_bool',
 			'label'           => esc_html__( 'Hide Event\'s Online URL in the Event Page', 'tribe-ext-online-events' ),
 			'default'         => false,
 			'validation_type' => 'boolean',
-		);
+		];
 
 		return $options;
 	}
@@ -360,15 +372,12 @@ class Tribe__Extension__Virtual__Event__Ticket extends Tribe__Extension {
 	/**
      * Filter HTML template to hide the online URL
      *
-     * @since 1.1.0
-     *
 	 * @param $pre_html
-     *
 	 * @param $file
-     *
 	 * @param $name
-     *
 	 * @param $template_class
+     *
+     * @since 1.1.0
 	 *
 	 * @return string
 	 */
@@ -379,9 +388,9 @@ class Tribe__Extension__Virtual__Event__Ticket extends Tribe__Extension {
 		}
 
 		if ( ! tribe_is_truthy( tribe_get_option( 'eventsControlHideLink' ) ) ) {
-            return $pre_html;
+			return $pre_html;
 		}
 
 		return '';
-    }
+	}
 }
