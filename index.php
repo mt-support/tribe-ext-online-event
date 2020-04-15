@@ -101,6 +101,31 @@ class Tribe__Extension__Virtual__Event__Ticket extends Tribe__Extension {
 	}
 
 	/**
+	 * Disable showing QR Code for Events with selected category
+	 *
+	 * @since 1.0.0
+	 *
+	 * @param $enabled bool
+	 * @param $ticket array
+	 *
+	 * @return bool
+	 */
+	public function disable_qr_code( $enabled, $ticket ) {
+
+		if ( ! isset( $ticket['event_id'] ) ) {
+			return $enabled;
+		}
+
+		$event = tribe_get_event( $ticket['event_id'] );
+
+		if ( ! $this->is_online_event( $event ) ) {
+			return $enabled;
+		}
+
+		return false;
+	}
+
+	/**
 	 * Check if the event contains the Selected category
 	 *
 	 * @param $event WP_Post
@@ -203,29 +228,5 @@ class Tribe__Extension__Virtual__Event__Ticket extends Tribe__Extension {
             </tr>
         </table>
 		<?php
-	}
-
-	/**
-	 * Disable showing QR Code for Events with selected category
-	 *
-	 * @since 1.0.0
-	 *
-	 * @param $enabled bool
-	 * @param $ticket array
-	 *
-	 * @return bool
-	 */
-	public function disable_qr_code( $enabled, $ticket ) {
-		if ( ! isset( $ticket['event_id'] ) ) {
-			return $enabled;
-		}
-
-		$event = tribe_get_event( $ticket['event_id'] );
-
-		if ( ! $this->is_online_event( $event ) ) {
-			return $enabled;
-		}
-
-		return false;
 	}
 }
