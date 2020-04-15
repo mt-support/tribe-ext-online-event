@@ -42,7 +42,7 @@ class Tribe__Extension__Virtual__Event__Ticket extends Tribe__Extension {
 		add_action( 'tribe_settings_do_tabs', array( $this, 'add_settings_tabs' ) );
 
 		//hide the saved field in the frontend
-		add_filter( 'tribe_get_custom_fields', array( $this, 'hide_online_link_field_from_details' ) );
+		add_filter( 'tribe_get_custom_fields', array( $this, 'hide_online_event_fields_from_details' ) );
 
 		//add Event Link in the Ticket Email
 		add_action( 'tribe_tickets_ticket_email_ticket_bottom', array( $this, 'render_online_link_in_email' ) );
@@ -63,7 +63,7 @@ class Tribe__Extension__Virtual__Event__Ticket extends Tribe__Extension {
 	 *
 	 * @return array
 	 */
-	public function hide_online_link_field_from_details( $data ) {
+	public function hide_online_event_fields_from_details( $data ) {
 
 		$saved_field = $this->get_event_online_field();
 		if ( empty( $saved_field ) ) {
