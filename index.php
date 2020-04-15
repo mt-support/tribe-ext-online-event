@@ -65,24 +65,23 @@ class Tribe__Extension__Virtual__Event__Ticket extends Tribe__Extension {
 	 */
 	public function hide_online_event_fields_from_details( $data ) {
 
-		$saved_field = $this->get_event_online_field();
-		if ( empty( $saved_field ) ) {
-			return $data;
-		}
+        $fields = $this->get_fields();
+        $blacklist = [];
 
-		$custom_fields = tribe_get_option( 'custom-fields' );
+        foreach( $fields as $field => $args) {
+            if( isset( $args['option'] ) ) {
+                $blacklist[] = $args['option'];
+            }
+        }
 
-		$selected_field = '';
+        foreach( tribe_get_option( 'custom-fields' ) as $field ) {
 
-		foreach ( $custom_fields as $field ) {
-			if ( $field['name'] == $saved_field ) {
-				$selected_field = $field['label'];
-				break;
+			if( in_array( $field['name'], $blacklist ) ) {
+
+                if( isset( $data[ $field['label'] ] ) ) {
+                    unset( $data[ $field['label'] ] );
+                }
 			}
-		}
-
-		if ( isset( $data[ $selected_field ] ) ) {
-			unset( $data[ $selected_field ] );
 		}
 
 		return $data;
@@ -96,9 +95,10 @@ class Tribe__Extension__Virtual__Event__Ticket extends Tribe__Extension {
 	 * @return void
 	 */
 	public function add_settings_tabs() {
+        $additional_email_fields = $this->get_fields();
 		require_once( dirname( __FILE__ ) . '/src/admin-views/tribe-options-virtual.php' );
 		new Tribe__Settings_Tab( 'online-events', __( 'Online Events', 'tribe-events-calendar-pro' ), $onlineTab );
-	}
+    }
 
 	/**
 	 * Disable showing QR Code for Events with selected category
@@ -154,17 +154,35 @@ class Tribe__Extension__Virtual__Event__Ticket extends Tribe__Extension {
 	}
 
 	/**
-	 * Get selected category
+	 * Get Fields
 	 *
-	 * @since 1.0.0
+	 * @since 1.1.0
 	 *
-	 * @return string
+	 * @return array
 	 */
-	public function get_online_category() {
-		return tribe_get_option( 'eventsOnlineCategory' );
-	}
+	private function get_fields() {
 
-	/**
+        $fields = [
+            'id' => [
+                'label' => __('Meeting ID', 'tribe-ext-online-events'),
+                'option' => 'eventsOnlineID',
+                'content' => '%s'
+            ],
+            'password' => [
+                'label' => __('Password', 'tribe-ext-online-events'),
+                'option' => 'eventsOnlinePassword',
+                'content' => '%s'
+            ],
+            'link' => [
+                'label' => __('Link', 'tribe-ext-online-events'),
+                'option' => 'eventsOnlineLink',
+                'content' => '<a href="%1$s">%1$s</a>'
+            ]
+        ];
+
+        $fields = apply_filters( 'tribe/events-online/email-fields', $fields );
+
+        return $fields;
 	 * Get selected Field
 	 *
 	 * @since 1.0.0
@@ -173,7 +191,7 @@ class Tribe__Extension__Virtual__Event__Ticket extends Tribe__Extension {
 	 */
 	public function get_event_online_field() {
 		return tribe_get_option( 'eventsOnlineField' );
-	}
+    }
 
 	/**
 	 * Render Event Link within Ticket Email
@@ -196,37 +214,32 @@ class Tribe__Extension__Virtual__Event__Ticket extends Tribe__Extension {
 			return;
 		}
 
-		$online_link = get_post_meta( $event_id, $this->get_event_online_field(), true );
-
-		if ( empty( $online_link ) ) {
-			return;
-		}
-
-		$heading = tribe_get_option( 'eventsOnlineHeading' );
+        $heading = tribe_get_option( 'eventsOnlineHeading' );
+        $fields = $this->get_fields();
 		?>
-        <table class="content" align="center" width="620" cellspacing="0" cellpadding="0" border="0" bgcolor="#ffffff"
-               style="margin:15px auto 0; padding:0;">
-            <tr>
-                <td align="center" valign="top" class="wrapper" width="620">
-                    <table class="inner-wrapper" border="0" cellpadding="0" cellspacing="0" width="620"
-                           bgcolor="#f7f7f7" style="margin:0 auto !important; width:620px; padding:0;">
-                        <tr>
-                            <td valign="center" class="ticket-content" align="center" border="0" cellpadding="20"
-                                cellspacing="0" style="padding:20px; background:#f7f7f7;">
-                                <h3 style="color:#0a0a0e; margin:0 0 10px 0 !important; font-family: 'Helvetica Neue', Helvetica, sans-serif; font-style:normal; text-decoration: underline; font-weight:700; font-size:28px; letter-spacing:normal; text-align:center;line-height: 100%;">
-                                    <span style="color:#0a0a0e !important"><?php _e( $heading, 'tribe-ext-online-events' ); ?></span>
-                                </h3>
-                                <p>
-                                    <a href="<?php esc_attr_e( $online_link ) ?>">
-										<?php echo $online_link ?>
-                                    </a>
-                                </p>
+        <div style="background:#f7f7f7;padding:25px;margin:15px 0;">
+            <h3 style="color:#0a0a0e;margin:0 0 25px 0!important;font-family:'Helvetica Neue',Helvetica,sans-serif;text-decoration: underline;font-weight:700;font-size:28px;text-align:left;">
+                <span style="color:#0a0a0e!important"><?php _e( $heading, 'tribe-ext-online-events' ); ?></span>
+            </h3>
+            <table class="content" cellspacing="0" cellpadding="0" border="0" style="width:100%;" >
+                <tbody>
+                    <tr>
+                        <?php foreach( $fields as $field => $args):
+                            $value = get_post_meta( $event_id, tribe_get_option( $args['option'] ), true );
+                            if( ! $value ) continue; ?>
+                            <td valign="top" align="left" style="padding:0;margin:0!important;">
+                                <h6 style="color:#909090!important;margin:0 0 10px 0;font-family:'Helvetica Neue',Helvetica,sans-serif;text-transform:uppercase;font-size:13px;font-weight:700!important;">
+                                    <?php echo esc_html( $args['label'] ) ?>
+                                </h6>
+                                <span style="color:#0a0a0e!important;font-family:'Helvetica Neue',Helvetica,sans-serif;font-size:15px;">
+                                    <?php printf( $args['content'], esc_html( $value ) ) ?>
+                                </span>
                             </td>
-                        </tr>
-                    </table>
-                </td>
-            </tr>
-        </table>
+                        <?php endforeach ?>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
 		<?php
 	}
 }
