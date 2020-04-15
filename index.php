@@ -125,6 +125,17 @@ class Tribe__Extension__Virtual__Event__Ticket extends Tribe__Extension {
 		return false;
 	}
 
+    /**
+	 * Get selected category
+	 *
+	 * @since 1.0.0
+	 *
+	 * @return string
+	 */
+	public function get_online_category() {
+		return tribe_get_option( 'eventsOnlineCategory' );
+    }
+
 	/**
 	 * Check if the event contains the Selected category
 	 *
@@ -183,14 +194,6 @@ class Tribe__Extension__Virtual__Event__Ticket extends Tribe__Extension {
         $fields = apply_filters( 'tribe/events-online/email-fields', $fields );
 
         return $fields;
-	 * Get selected Field
-	 *
-	 * @since 1.0.0
-	 *
-	 * @return mixed
-	 */
-	public function get_event_online_field() {
-		return tribe_get_option( 'eventsOnlineField' );
     }
 
 	/**
