@@ -230,7 +230,7 @@ class Tribe__Extension__Virtual__Event__Ticket extends Tribe__Extension {
                         <?php foreach( $fields as $field => $args):
                             $value = get_post_meta( $event_id, tribe_get_option( $args['option'] ), true );
                             if( ! $value ) continue; ?>
-                            <td valign="top" align="left" style="padding:0;margin:0!important;">
+                            <td valign="top" align="left" width="120">
                                 <h6 style="color:#909090!important;margin:0 0 10px 0;font-family:'Helvetica Neue',Helvetica,sans-serif;text-transform:uppercase;font-size:13px;font-weight:700!important;">
                                     <?php echo esc_html( $args['label'] ) ?>
                                 </h6>
