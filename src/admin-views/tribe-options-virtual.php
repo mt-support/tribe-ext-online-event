@@ -71,6 +71,8 @@ $onlineTab['fields']['eventsOnlineField'] = [
 	'default'      => '',
 	'tooltip'      => __( 'To know more about Custom fields visit the WordPress <a target="_blank" href="https://wordpress.org/support/article/custom-fields/">Custom Fields Wiki</a>', 'tribe-ext-online-events' ),
 	'can_be_empty' => true,
+	'validation_type' => 'alpha_numeric_with_dashes_and_underscores',
+	'size'            => 'medium',
 ];
 
 $onlineTab['fields']['eventsOnlineFieldHelperEmail'] = [

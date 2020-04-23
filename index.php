@@ -1,8 +1,10 @@
 <?php
 /**
  * Plugin Name:     Events Tickets Extension: Virtual / Online Event Tickets
+ * Plugin URI:        https://theeventscalendar.com/extensions/add-a-private-event-link-to-ticket-emails/
+ * GitHub Plugin URI: https://github.com/mt-support/tribe-ext-online-event
  * Description:     An extension that allows you to send event links in ticket email to registrants only
- * Version:         1.0.1
+ * Version:         1.1.1
  * Extension Class: Tribe__Extension__Virtual__Event__Ticket
  * Author:          Modern Tribe, Inc.
  * Author URI:      http://m.tri.be/1971
@@ -23,7 +25,7 @@ if ( ! class_exists( 'Tribe__Extension' ) ) {
 
 class Tribe__Extension__Virtual__Event__Ticket extends Tribe__Extension {
 
-	private static $version = '1.1.0';
+	private static $version = '1.1.1';
 
 	/**
 	 * Setup the Extension's properties.
