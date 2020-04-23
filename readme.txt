@@ -1,14 +1,15 @@
 === Events Tickets Extension: Virtual or Online Event Setup ===
 Contributors: ModernTribe
 Donate link: http://m.tri.be/29
+Plugin URI: https://theeventscalendar.com/extensions/add-a-private-event-link-to-ticket-emails/
+GitHub Plugin URI: https://github.com/mt-support/tribe-ext-online-event
 Tags: events, calendar
 Requires at least: 4.7
-Tested up to: 5.2
+Tested up to: 5.4
 Requires PHP: 5.6
-Stable tag: 1.0.0
+Stable tag: 1.1.1
 License: GPL version 2
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
-
 
 == Description ==
 
@@ -36,3 +37,20 @@ Please visit our [extension library](https://theeventscalendar.com/extensions/) 
 We're always interested in your feedback and our [premium forums](https://theeventscalendar.com/support-forums/) are the best place to flag any issues. Do note, however, that the degree of support we provide for extensions like this one tends to be very limited.
 
 == Changelog ==
+
+= v[1.1.1] April 23, 2020 =
+
+* Fixed version bump and updated readme
+* Fixed custom meta value not saving issue
+
+= v[1.1.0] April 23, 2020 =
+
+* Added support for Events Control extension( https://theeventscalendar.com/extensions/events-happening-now/ ).
+
+= v[1.0.1] March 25, 2020 =
+
+* Added support for Custom Meta Field when Events Calendar Pro is not available.
+
+= v[1.0.0] March 20, 2020 =
+
+* Initial release
