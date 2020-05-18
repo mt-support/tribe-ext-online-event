@@ -5,64 +5,64 @@ $fields     = [];
 
 if ( 'online-events' === tribe_get_request_var( 'tab' ) ) {
 
-	$taxonomy       = Tribe__Events__Main::instance()->get_event_taxonomy();
-	$selected_terms = [];
-	$taxonomy_obj   = get_taxonomy( $taxonomy );
+    $taxonomy       = Tribe__Events__Main::instance()->get_event_taxonomy();
+    $selected_terms = [];
+    $taxonomy_obj   = get_taxonomy( $taxonomy );
 
-	$terms = get_terms( $taxonomy, ['hide_empty' => false] );
+    $terms = get_terms( $taxonomy, ['hide_empty' => false] );
 
-	if ( ! empty( $terms ) ) {
-		$event_cats[0] = __( 'Select a category', 'tribe-ext-online-events' );
-		foreach ( $terms as $term ) {
-			$event_cats[ $term->term_id ] = $term->name;
-		}
-	}
+    if ( ! empty( $terms ) ) {
+        $event_cats[0] = __( 'Select a category', 'tribe-ext-online-events' );
+        foreach ( $terms as $term ) {
+            $event_cats[ $term->term_id ] = $term->name;
+        }
+    }
 
-	$custom_fields = tribe_get_option( 'custom-fields' );
+    $custom_fields = tribe_get_option( 'custom-fields' );
 
-	if ( ! empty( $custom_fields ) ) {
-		$fields[0] = __( 'Select a Field', 'tribe-ext-online-events' );
-		foreach ( $custom_fields as $field ) {
-			$fields[ $field['name'] ] = $field['label'];
-		}
-	}
+    if ( ! empty( $custom_fields ) ) {
+        $fields[0] = __( 'Select a Field', 'tribe-ext-online-events' );
+        foreach ( $custom_fields as $field ) {
+            $fields[ $field['name'] ] = $field['label'];
+        }
+    }
 }
 
 $onlineTab = [
-	'priority' => 30,
-	'fields'   => [
-		'info-start' => [
-			'type' => 'html',
-			'html' => '<div id="modern-tribe-info">',
+    'priority' => 30,
+    'fields'   => [
+        'info-start' => [
+            'type' => 'html',
+            'html' => '<div id="modern-tribe-info">',
         ],
-		'info-box-title' => [
-			'type' => 'html',
-			'html' => '<h2>' . __( 'Online Events', 'tribe-ext-online-events' ) . '</h2>',
+        'info-box-title' => [
+            'type' => 'html',
+            'html' => '<h2>' . __( 'Online Events', 'tribe-ext-online-events' ) . '</h2>',
         ],
-		'info-box-description' => [
-			'type' => 'html',
-			'html' => '<p>' . __( '<p>Choose the category and fields for events that are Online or Virtual. </p>', 'tribe-ext-online-events' ) . '</p>',
+        'info-box-description' => [
+            'type' => 'html',
+            'html' => '<p>' . __( '<p>Choose the category and fields for events that are Online or Virtual. </p>', 'tribe-ext-online-events' ) . '</p>',
         ],
-		'info-end' => [
-			'type' => 'html',
-			'html' => '</div>',
+        'info-end' => [
+            'type' => 'html',
+            'html' => '</div>',
         ],
-		'tribe-form-content-start' => [
-			'type' => 'html',
-			'html' => '<div class="tribe-settings-form-wrap">',
+        'tribe-form-content-start' => [
+            'type' => 'html',
+            'html' => '<div class="tribe-settings-form-wrap">',
         ],
-		'eventsOnlineCategoryHelperTitle' => [
-			'type' => 'html',
-			'html' => '<h3>' . __( 'Online Event Category', 'tribe-ext-online-events' ) . '</h3>',
+        'eventsOnlineCategoryHelperTitle' => [
+            'type' => 'html',
+            'html' => '<h3>' . __( 'Online Event Category', 'tribe-ext-online-events' ) . '</h3>',
         ],
-		'eventsOnlineCategory' => [
-			'type'            => 'dropdown',
-			'label'           => __( 'Category', 'tribe-ext-online-events' ),
-			'default'         => false,
-			'validation_type' => 'options',
-			'options'         => $event_cats,
-			'if_empty'        => __( 'No categories yet. Create a category under Events > Categories for your online events', 'tribe-ext-online-events' ),
-			'can_be_empty'    => true,
+        'eventsOnlineCategory' => [
+            'type'            => 'dropdown',
+            'label'           => __( 'Category', 'tribe-ext-online-events' ),
+            'default'         => false,
+            'validation_type' => 'options',
+            'options'         => $event_cats,
+            'if_empty'        => __( 'No categories yet. Create a category under Events > Categories for your online events', 'tribe-ext-online-events' ),
+            'can_be_empty'    => true,
         ],
         'eventsOnlineFieldHelperEmail' => [
             'type' => 'html',
