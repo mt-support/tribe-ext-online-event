@@ -4,7 +4,7 @@
  * Plugin URI:        https://theeventscalendar.com/extensions/add-a-private-event-link-to-ticket-emails/
  * GitHub Plugin URI: https://github.com/mt-support/tribe-ext-online-event
  * Description:     An extension that allows you to send event links in ticket email to registrants only
- * Version:         1.1.1
+ * Version:         1.2
  * Extension Class: Tribe__Extension__Virtual__Event__Ticket
  * Author:          Modern Tribe, Inc.
  * Author URI:      http://m.tri.be/1971
@@ -25,7 +25,7 @@ if ( ! class_exists( 'Tribe__Extension' ) ) {
 
 class Tribe__Extension__Virtual__Event__Ticket extends Tribe__Extension {
 
-	private static $version = '1.1.1';
+	private static $version = '1.2';
 
 	/**
 	 * Setup the Extension's properties.
@@ -90,7 +90,25 @@ class Tribe__Extension__Virtual__Event__Ticket extends Tribe__Extension {
 
 		$options['fields']['eventsOnlineField'] = [
 			'type'            => 'dropdown',
-			'label'           => __( 'Events Additional Field that contains Event link', 'tribe-ext-online-events' ),
+			'label'           => __( '<strong>Event Link #1</strong> Additional Field', 'tribe-ext-online-events' ),
+			'default'         => false,
+			'validation_type' => 'options',
+			'options'         => $fields,
+			'if_empty'        => __( 'No Fields are found. You need to create an additional field. For help visit <a target="_blank" href="https://theeventscalendar.com/knowledgebase/k/pro-additional-fields/">here</a>', 'tribe-ext-online-events' ),
+			'can_be_empty'    => true,
+		];
+		$options['fields']['eventsOnlineField2'] = [
+			'type'            => 'dropdown',
+			'label'           => __( '<strong>Event Link #2</strong> Additional Field', 'tribe-ext-online-events' ),
+			'default'         => false,
+			'validation_type' => 'options',
+			'options'         => $fields,
+			'if_empty'        => __( 'No Fields are found. You need to create an additional field. For help visit <a target="_blank" href="https://theeventscalendar.com/knowledgebase/k/pro-additional-fields/">here</a>', 'tribe-ext-online-events' ),
+			'can_be_empty'    => true,
+		];
+		$options['fields']['eventsOnlineField3'] = [
+			'type'            => 'dropdown',
+			'label'           => __( '<strong>Event Link #3</strong> Additional Field', 'tribe-ext-online-events' ),
 			'default'         => false,
 			'validation_type' => 'options',
 			'options'         => $fields,
@@ -211,6 +229,49 @@ class Tribe__Extension__Virtual__Event__Ticket extends Tribe__Extension {
 	}
 
 	/**
+	 * Get email template output for an individual event link with header
+	 *
+	 * @since 1.2
+	 *
+	 * @return string
+	 */
+	public function get_email_link_template($online_link = '',$heading = '') {
+		$output = '
+        <table class="content" align="center" width="620" cellspacing="0" cellpadding="0" border="0" bgcolor="#ffffff"
+	           style="margin:15px auto 0; padding:0;">
+	        <tr>
+	            <td align="center" valign="top" class="wrapper" width="620">
+	                <table class="inner-wrapper" border="0" cellpadding="0" cellspacing="0" width="620"
+	                       bgcolor="#f7f7f7" style="margin:0 auto !important; width:620px; padding:0;">
+	                    <tr>
+	                        <td valign="center" class="ticket-content" align="center" border="0" cellpadding="20"
+	                            cellspacing="0" style="padding:20px; background:#f7f7f7;">';
+	                            if(!empty($heading)){
+		                            $output.= '<h3 style="color:#0a0a0e; margin:0 0 10px 0 !important; font-family: \'Helvetica Neue\', Helvetica, sans-serif; font-style:normal; text-decoration: underline; font-weight:700; font-size:28px; letter-spacing:normal; text-align:center;line-height: 100%;">
+	                                <span style="color:#0a0a0e !important">';
+	                                $output.= _e( $heading, 'tribe-ext-online-events' );
+	                                $output.= '</span>
+	                            </h3>';
+	                            }
+	                            $output.= '
+	                            <p>
+	                                <a href="';
+	                                $output.= esc_attr_e( $online_link );
+	                                $output.= '">';
+										$output.= $online_link;
+	                                $output.= '</a>
+	                            </p>
+	                        </td>
+	                    </tr>
+	                </table>
+	            </td>
+	        </tr>
+	    </table>
+	    ';
+	    return $output;
+	}
+
+	/**
 	 * Render Event Link within Ticket Email
 	 *
 	 * @param $ticket array
@@ -234,37 +295,22 @@ class Tribe__Extension__Virtual__Event__Ticket extends Tribe__Extension {
 		}
 
 		$online_link = get_post_meta( $event_id, $this->get_event_online_field(), true );
-
-		if ( empty( $online_link ) ) {
-			return;
+		if ( !empty( $online_link ) ) {
+			$heading = tribe_get_option( 'eventsOnlineHeading' );
+			echo $this->get_email_link_template($online_link,$heading);
 		}
 
-		$heading = tribe_get_option( 'eventsOnlineHeading' );
-		?>
-        <table class="content" align="center" width="620" cellspacing="0" cellpadding="0" border="0" bgcolor="#ffffff"
-               style="margin:15px auto 0; padding:0;">
-            <tr>
-                <td align="center" valign="top" class="wrapper" width="620">
-                    <table class="inner-wrapper" border="0" cellpadding="0" cellspacing="0" width="620"
-                           bgcolor="#f7f7f7" style="margin:0 auto !important; width:620px; padding:0;">
-                        <tr>
-                            <td valign="center" class="ticket-content" align="center" border="0" cellpadding="20"
-                                cellspacing="0" style="padding:20px; background:#f7f7f7;">
-                                <h3 style="color:#0a0a0e; margin:0 0 10px 0 !important; font-family: 'Helvetica Neue', Helvetica, sans-serif; font-style:normal; text-decoration: underline; font-weight:700; font-size:28px; letter-spacing:normal; text-align:center;line-height: 100%;">
-                                    <span style="color:#0a0a0e !important"><?php _e( $heading, 'tribe-ext-online-events' ); ?></span>
-                                </h3>
-                                <p>
-                                    <a href="<?php esc_attr_e( $online_link ) ?>">
-										<?php echo $online_link ?>
-                                    </a>
-                                </p>
-                            </td>
-                        </tr>
-                    </table>
-                </td>
-            </tr>
-        </table>
-		<?php
+		$online_link2 = tribe_get_option( 'eventsOnlineField2' );
+		if ( !empty( $online_link2 ) ) {
+			$heading2 = tribe_get_option( 'eventsOnlineHeading2' );
+			echo $this->get_email_link_template($online_link2,$heading2);
+		}
+
+		$online_link3 = tribe_get_option( 'eventsOnlineField3' );
+		if ( !empty( $online_link3 ) ) {
+			$heading3 = tribe_get_option( 'eventsOnlineHeading3' );
+			echo $this->get_email_link_template($online_link3,$heading3);
+		}
 	}
 
 	/**
@@ -353,6 +399,8 @@ class Tribe__Extension__Virtual__Event__Ticket extends Tribe__Extension {
 			'eventsOnlineCategory',
 			'eventsOnlineFieldHelperTitle',
 			'eventsOnlineField',
+			'eventsOnlineField2',
+			'eventsOnlineField3',
 		];
 
 		foreach ( $remove_fields as $field ) {
