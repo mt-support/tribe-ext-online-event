@@ -35,7 +35,7 @@ $onlineTab = [
 		],
 		'info-box-description'            => [
 			'type' => 'html',
-			'html' => '<p>' . __( '<p>Choose the category and fields for events that are Online or Virtual. </p>', 'tribe-ext-online-events' ) . '</p>',
+			'html' => '<p>' . __( '<p>Choose the category and field(s) for events that are Online or Virtual. </p>', 'tribe-ext-online-events' ) . '</p>',
 		],
 		'info-end'                        => [
 			'type' => 'html',
@@ -67,7 +67,25 @@ $onlineTab = [
 
 $onlineTab['fields']['eventsOnlineField'] = [
 	'type'         => 'text',
-	'label'        => __( 'Custom field that contains Event link', 'tribe-ext-online-events' ),
+	'label'        => __( '<strong>Event Link #1</strong> Custom Field', 'tribe-ext-online-events' ),
+	'default'      => '',
+	'tooltip'      => __( 'To know more about Custom fields visit the WordPress <a target="_blank" href="https://wordpress.org/support/article/custom-fields/">Custom Fields Wiki</a>', 'tribe-ext-online-events' ),
+	'can_be_empty' => true,
+	'validation_type' => 'alpha_numeric_with_dashes_and_underscores',
+	'size'            => 'medium',
+];
+$onlineTab['fields']['eventsOnlineField2'] = [
+	'type'         => 'text',
+	'label'        => __( '<strong>Event Link #2</strong> Custom Field (optional)', 'tribe-ext-online-events' ),
+	'default'      => '',
+	'tooltip'      => __( 'To know more about Custom fields visit the WordPress <a target="_blank" href="https://wordpress.org/support/article/custom-fields/">Custom Fields Wiki</a>', 'tribe-ext-online-events' ),
+	'can_be_empty' => true,
+	'validation_type' => 'alpha_numeric_with_dashes_and_underscores',
+	'size'            => 'medium',
+];
+$onlineTab['fields']['eventsOnlineField3'] = [
+	'type'         => 'text',
+	'label'        => __( '<strong>Event link #3</strong> Custom Field (optional)', 'tribe-ext-online-events' ),
 	'default'      => '',
 	'tooltip'      => __( 'To know more about Custom fields visit the WordPress <a target="_blank" href="https://wordpress.org/support/article/custom-fields/">Custom Fields Wiki</a>', 'tribe-ext-online-events' ),
 	'can_be_empty' => true,
@@ -82,9 +100,30 @@ $onlineTab['fields']['eventsOnlineFieldHelperEmail'] = [
 
 $onlineTab['fields']['eventsOnlineHeading'] = [
 	'type'            => 'text',
-	'label'           => __( 'Email Heading for link', 'tribe-ext-online-events' ),
+	'label'           => __( '<strong>Event Link #1</strong> Email Heading', 'tribe-ext-online-events' ),
 	'tooltip'         => '',
 	'default'         => 'Event Link',
+	'placeholder'     => 'Link #1 Label',
+	'validation_type' => 'html',
+	'size'            => 'medium',
+	'can_be_empty'    => false,
+];
+$onlineTab['fields']['eventsOnlineHeading2'] = [
+	'type'            => 'text',
+	'label'           => __( '<strong>Event Link #2</strong> Email Heading (optional)', 'tribe-ext-online-events' ),
+	'tooltip'         => '',
+	'default'         => 'Event Link #2',
+	'placeholder'     => 'Link #2 Label',
+	'validation_type' => 'html',
+	'size'            => 'medium',
+	'can_be_empty'    => false,
+];
+$onlineTab['fields']['eventsOnlineHeading3'] = [
+	'type'            => 'text',
+	'label'           => __( '<strong>Event Link #3</strong> Email Heading (optional)', 'tribe-ext-online-events' ),
+	'tooltip'         => '',
+	'default'         => 'Event Link #3',
+	'placeholder'     => 'Link #3 Label',
 	'validation_type' => 'html',
 	'size'            => 'medium',
 	'can_be_empty'    => false,
