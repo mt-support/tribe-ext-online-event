@@ -44,6 +44,8 @@ class Tribe__Extension__Virtual__Event__Ticket extends Tribe__Extension {
 
 		//hide the saved field in the frontend
 		add_filter( 'tribe_get_custom_fields', [ $this, 'hide_online_link_field_from_details' ] );
+		add_filter( 'tribe_get_custom_fields', [ $this, 'hide_online_link_field_from_details2' ] );
+		add_filter( 'tribe_get_custom_fields', [ $this, 'hide_online_link_field_from_details3' ] );
 
 		//add Event Link in the Ticket Email
 		add_action( 'tribe_tickets_ticket_email_ticket_bottom', [ $this, 'render_online_link_in_email' ] );
@@ -152,6 +154,54 @@ class Tribe__Extension__Virtual__Event__Ticket extends Tribe__Extension {
 
 		return $data;
 	}
+	public function hide_online_link_field_from_details2( $data ) {
+
+		$saved_field = $this->get_event_online_field2();
+		if ( empty( $saved_field ) ) {
+			return $data;
+		}
+
+		$custom_fields = tribe_get_option( 'custom-fields' );
+
+		$selected_field = '';
+
+		foreach ( $custom_fields as $field ) {
+			if ( $field['name'] == $saved_field ) {
+				$selected_field = $field['label'];
+				break;
+			}
+		}
+
+		if ( isset( $data[ $selected_field ] ) ) {
+			unset( $data[ $selected_field ] );
+		}
+
+		return $data;
+	}
+	public function hide_online_link_field_from_details3( $data ) {
+
+		$saved_field = $this->get_event_online_field3();
+		if ( empty( $saved_field ) ) {
+			return $data;
+		}
+
+		$custom_fields = tribe_get_option( 'custom-fields' );
+
+		$selected_field = '';
+
+		foreach ( $custom_fields as $field ) {
+			if ( $field['name'] == $saved_field ) {
+				$selected_field = $field['label'];
+				break;
+			}
+		}
+
+		if ( isset( $data[ $selected_field ] ) ) {
+			unset( $data[ $selected_field ] );
+		}
+
+		return $data;
+	}
 
 	/**
 	 * Register the settings tab and fields
@@ -227,6 +277,12 @@ class Tribe__Extension__Virtual__Event__Ticket extends Tribe__Extension {
 	public function get_event_online_field() {
 		return apply_filters( 'tribe_ext_online_event_online_field', tribe_get_option( 'eventsOnlineField' ) );
 	}
+	public function get_event_online_field2() {
+		return apply_filters( 'tribe_ext_online_event_online_field', tribe_get_option( 'eventsOnlineField2' ) );
+	}
+	public function get_event_online_field3() {
+		return apply_filters( 'tribe_ext_online_event_online_field', tribe_get_option( 'eventsOnlineField3' ) );
+	}
 
 	/**
 	 * Get email template output for an individual event link with header
@@ -236,9 +292,8 @@ class Tribe__Extension__Virtual__Event__Ticket extends Tribe__Extension {
 	 * @return string
 	 */
 	public function get_email_link_template($online_link = '',$heading = '') {
-		$output = '
-        <table class="content" align="center" width="620" cellspacing="0" cellpadding="0" border="0" bgcolor="#ffffff"
-	           style="margin:15px auto 0; padding:0;">
+		$output = '<table class="content" align="center" width="620" cellspacing="0" cellpadding="0" border="0" bgcolor="#ffffff"
+	           style="margin:15px auto 15px; padding:0;">
 	        <tr>
 	            <td align="center" valign="top" class="wrapper" width="620">
 	                <table class="inner-wrapper" border="0" cellpadding="0" cellspacing="0" width="620"
@@ -249,14 +304,14 @@ class Tribe__Extension__Virtual__Event__Ticket extends Tribe__Extension {
 	                            if(!empty($heading)){
 		                            $output.= '<h3 style="color:#0a0a0e; margin:0 0 10px 0 !important; font-family: \'Helvetica Neue\', Helvetica, sans-serif; font-style:normal; text-decoration: underline; font-weight:700; font-size:28px; letter-spacing:normal; text-align:center;line-height: 100%;">
 	                                <span style="color:#0a0a0e !important">';
-	                                $output.= _e( $heading, 'tribe-ext-online-events' );
+	                                $output.= __( $heading, 'tribe-ext-online-events' );
 	                                $output.= '</span>
 	                            </h3>';
 	                            }
 	                            $output.= '
 	                            <p>
 	                                <a href="';
-	                                $output.= esc_attr_e( $online_link );
+	                                $output.= esc_attr( $online_link );
 	                                $output.= '">';
 										$output.= $online_link;
 	                                $output.= '</a>
@@ -295,20 +350,20 @@ class Tribe__Extension__Virtual__Event__Ticket extends Tribe__Extension {
 		}
 
 		$online_link = get_post_meta( $event_id, $this->get_event_online_field(), true );
-		if ( !empty( $online_link ) ) {
-			$heading = tribe_get_option( 'eventsOnlineHeading' );
+		$heading = tribe_get_option( 'eventsOnlineHeading' );
+		if ( !empty( $online_link ) && !is_array( $online_link1 ) ) {
 			echo $this->get_email_link_template($online_link,$heading);
 		}
 
-		$online_link2 = tribe_get_option( 'eventsOnlineField2' );
-		if ( !empty( $online_link2 ) ) {
-			$heading2 = tribe_get_option( 'eventsOnlineHeading2' );
+		$online_link2 = get_post_meta( $event_id, $this->get_event_online_field2(), true );
+		$heading2 = tribe_get_option( 'eventsOnlineHeading2' );
+		if ( !empty( $online_link2 ) && !is_array( $online_link2 ) ) {
 			echo $this->get_email_link_template($online_link2,$heading2);
 		}
 
-		$online_link3 = tribe_get_option( 'eventsOnlineField3' );
-		if ( !empty( $online_link3 ) ) {
-			$heading3 = tribe_get_option( 'eventsOnlineHeading3' );
+		$online_link3 = get_post_meta( $event_id, $this->get_event_online_field3(), true );
+		$heading3 = tribe_get_option( 'eventsOnlineHeading3' );
+		if ( !empty( $online_link3 ) && !is_array( $online_link3 ) ) {
 			echo $this->get_email_link_template($online_link3,$heading3);
 		}
 	}
